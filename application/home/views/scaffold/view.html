@@ -1,0 +1,19 @@
+<div id="apmenu">
+    <div style="margin-bottom: 20px;">
+        <a href="/<?=$controller;?>/index"> View all</a>
+        <a href="/<?=$controller;?>/add"> Add </a>
+    </div>
+    <table>
+    <? foreach($data as $key => $value) :?>
+        <tr>
+            <td style="color: #003595;"> <?=$key;?> </td>
+            <td style="color: #555555"> <?=$value;?> </td>
+        </tr>
+    <? endforeach; ?>
+    </table>
+    <div style="margin-top: 20px">
+        <a href="/<?=$controller;?>/edit/id/<?=$data['id'];?>"><button> edit </button></a>
+        <a href="/<?=$controller;?>/delete/id/<?=$data['id'];?>"><button> Delete </button></a>
+    </div>
+</div>
+<div class="clear"></div>

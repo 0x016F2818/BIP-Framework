@@ -1,0 +1,19 @@
+Welcome 
+ <br />
+Please execute this query in your test database: <br />
+<pre>
+CREATE TABLE IF NOT EXISTS `posts` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) NOT NULL,
+  `content` text NOT NULL,
+  `date_created` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+</pre>
+make the appropriate changes in 
+<pre>config/main.php </pre>
+and
+<pre> config/database.php</pre>
+<br />and get familiar with the examples: <br />
+<a href="<?=$site_url;?>post"> Crud example </a> <br />
+<a href="<?=$site_url;?>postscaffolding"> Scaffolding example</a> <br />

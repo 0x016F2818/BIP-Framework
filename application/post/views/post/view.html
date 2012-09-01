@@ -1,0 +1,13 @@
+<a href="<?=$site_url;?>post">
+	<input type="button" value="View all" />
+</a>
+<a href="<?=$site_url;?>post/edit/id/<?=$post->id;?>">
+	<input type="button" value="Edit" />
+</a>
+<a href="<?=$site_url;?>post/delete/id/<?=$post->id;?>">
+	<input type="button" value="Delete" />
+</a>
+<br />
+<b><?=$post->title;?></b>
+<p><?=$post->content;?> </p>
+<?=date("d,M Y", $post->date_created);?>

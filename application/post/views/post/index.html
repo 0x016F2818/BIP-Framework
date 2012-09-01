@@ -1,0 +1,29 @@
+
+<a href="<?=$site_url;?>post/add">
+	<input type="button" value="Add" />
+</a>
+
+<table>
+	<tr>
+		<th> id </th>
+		<th> title </th>
+		<th> date created </th>
+	</tr>
+	<? if(empty($posts)): ?>
+		<tr>
+			<td colspan="3"> No posts created yet </td>
+		</tr>
+	<? else: ?>
+		<? foreach($posts as $p):?>
+			<tr>
+				<td> <?=$p->id;?> </td>
+				<td> 
+					<a href="<?=$site_url;?>post/view/id/<?=$p->id;?>">
+						<?=$p->title; ?> 
+					</a>
+				</td>
+				<td> <?=date("d,M Y H:i", $p->date_created); ?> </td>
+			</tr>	
+		<? endforeach; ?>		
+	<? endif; ?>
+</table>

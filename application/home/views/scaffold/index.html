@@ -1,0 +1,60 @@
+<div id="apmenu">
+    <div style="margin-bottom: 20px; ">
+        <a href="/<?=$controller;?>/add"> Add New <?= $item ?></a>
+    </div>
+    <table width="100%" style="border: 1px solid #efefef;">
+        <tr>
+            <? foreach($fields as $f):?>
+                <th> 
+                	<?=$f;?>
+                	<a href="/<?=$controller;?>/index/page/0/sort_by/<?=$f;?>/order/asc">
+                		<img src="/data/img/icons/sort_asc.png" alt="" width="12" border="0"/>
+                	</a>
+                	<a href="/<?=$controller;?>/index/page/0/sort_by/<?=$f;?>/order/desc">
+                		<img src="/data/img/icons/sort_desc.png" alt="" width="12" border="0" />
+                	</a>  
+                </th>
+            <? endforeach;?>
+           <? if(count($fields) !=0): ?>
+            <th> Actions </th>
+            <? endif; ?>
+        </tr>
+        <? if(empty($data)):?>
+        <tr>
+            <td colspan="<?=count($fields)+1;?>"> There is no records </td>
+        </tr>
+        <? else: ?>
+            <? foreach($data as $row): ?>
+                <tr>
+                    
+                <? foreach($fields as $key):?>
+                    <td <? if($key =='id'): ?> width="64" <? endif; ?>> <?=$row[$key];?> </td>
+                <? endforeach;?>
+                    <td width="170">
+                        <a href="/<?=$controller;?>/view/id/<?=$row['id'];?>"> view </a> |
+                        <a href="/<?=$controller;?>/edit/id/<?=$row['id'];?>"> edit </a> |
+                        <a href="/<?=$controller;?>/delete/id/<?=$row['id'];?>"> delete </a>
+                    </td>
+                </tr>
+            <? endforeach; ?>
+        <? endif; ?>
+
+    </table>
+    
+    <? if($pagination == true):?>
+        <div class="pagingmenu">
+            <ul>
+            <? for($i=0; $i<$num_pages; $i++): ?>
+                <li>
+                    <a href="/<?=$controller;?>/index/page/<?=$i;?>/<?=$curr_params;?>" <? if($curr_page == $i):?> class="current" <? endif; ?>>
+                        <?=$i+1; ?>
+                    </a>
+                </li>
+            <? endfor; ?>
+            </ul>
+        </div>
+    <? endif; ?>
+	 
+</div>
+
+<div class="clear"></div>
