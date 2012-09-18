@@ -11,11 +11,13 @@ abstract class Controller {
 		$this->Uri = new Uri();
 		
 		$this->Tpl->assign("site_url", $this->Config->item("main", "site_url"));
+		$default = $this->Config->item("routes", "default");
+		
 		$this->Tpl->assign(
 				"controller", 
 				( $this->Uri->segment(1) ) ? 
 					strtolower($this->Uri->segment(1)) : 
-					$this->Config->item("main", "default_controller")
+					$default->getRealController()
 		);
 		$this->Tpl->assign(
 				"action",
