@@ -6,10 +6,12 @@ class ApiConnect{
 	private $password;
 	protected $curl;
 	
-	public function ApiConnect($base_url = "", $username = "", $password = ""){
+	public function ApiConnect($base_url, $username = "", $password = ""){
+		
+		$this->base_url = $base_url;
 		$this->username = $username;
 		$this->password = $password;
-		$this->base_url = $base_url;
+		
 	}
 	
 	public function setUser($username){
@@ -39,6 +41,12 @@ class ApiConnect{
 		$data = curl_exec($this->curl);
 		return $data;
 	}
+	
+	
+	public function getInfo(){
+		return curl_getinfo($this->curl);
+	}
+	
 	
 	protected function getUrlParams($params){
 		if(!is_array($params)){

@@ -28,6 +28,35 @@ $routes = array(
 						)
 				)
 		),
+		
+		"members" => new RouteController(
+			new RouteControllerNew("members"),
+			new RouteControllerReal("users"),
+			array(
+				new RouteAction(
+					new RouteActionNew("getMember"), 
+					new RouteActionReal("getUser")		
+				),
+				new RouteAction(
+					new RouteActionNew("getMemberData"),
+					new RouteActionReal("getUserData")		
+				)
+			)
+		),
+		
+		"users" => new RouteController(
+				new RouteControllerNew("users"),
+				new RouteControllerReal("home"),
+				array(
+					new RouteAction( 
+						new RouteActionNew("index"), 
+						new RouteActionReal("show404")
+					)		
+				)		
+				
+				
+		),
+		
 
 		"404" => new RouteController(
 				new RouteControllerNew("home"),
