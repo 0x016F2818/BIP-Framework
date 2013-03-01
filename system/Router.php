@@ -94,6 +94,26 @@ class Router {
 		}
 		return $controllers_index;
 	}
+	
+	public function getControllerModuleDir($controller_class){
+		$module_name = $this->getControllerModuleName($controller_class);
+		return APPPATH . $module_name . DIRECTORY_SEPARATOR;
+	}
+	
+	public function getControllerModuleName($controller_class){
+		$module = strtolower( str_replace("Controller", "", $controller_class) );
+		$index = (new Router())->buildControllerIndex();
+		
+		if(isset($index[$module])) {
+			$controller_folder = $index[$module];
+			$controller_folder_arr = explode(DIRECTORY_SEPARATOR, $controller_folder);
+			$num_elems = count($controller_folder_arr);
+			
+			return $controller_folder_arr[$num_elems -3];
+		}		
+		
+	}
+	
 }
 
 

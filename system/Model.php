@@ -16,23 +16,11 @@ abstract class Model {
 		
 	}
 
-
-	public function __get($var){
-		if(property_exists($this, $var))
-			return $this->$var;
-	}
-
-	public function __set($name, $value) {
-		$this->$name = $value;
-	}
-
-	abstract function getTable();
-
-
 	public function get($id) {
+
 		$data = $this->getData(array('id' => $id), 1);
-		if(!empty($data))
-			$this->buildObject($data[0]);
+		$this->buildObject(current($data));
+		return $this;
 	}
 
 
@@ -53,7 +41,7 @@ abstract class Model {
 			return array();
 		}
 	}
-
+	
 	public static function getRowCount($where = null){
 		$db = Db::getInstance();
 
@@ -79,11 +67,13 @@ abstract class Model {
 		
 		$db = Db::getInstance();
 
-		if($where !== null)
+		if($where !== null){
 			$db->where($where);
+		}
 
-		if($limit !== null)
+		if($limit !== null) {
 			$db->limit($limit);
+		}
 
 		if($order !== null){
 			$db->order_by($order);
@@ -95,15 +85,21 @@ abstract class Model {
 
 		$res = $db->get($table);
 
-		if(!empty($res)) {
-			return $res;
-		}
+		return $res;
 	}
 
 
-	public function buildObject($data){
-		foreach($data as $key => $val) {
-			$this->$key = $val;
+	protected function buildObject($data){
+		
+		if($data) {
+			
+			$aProperties = $this->getChildProperties();
+			
+			foreach($data as $key => $val) {
+				if( in_array($key, $aProperties)) {
+					$this->$key = $val;
+				}
+			}
 		}
 	}
 
@@ -126,11 +122,42 @@ abstract class Model {
 		$this->db->where('id', $this->id);
 		$this->db->delete($this->getTable());
 	}
-
-
-	public function toArray(){
-		$data = get_object_vars($this);
-		unset($data['db']);
-		return $data;
+	
+	private function getChildProperties(){
+		$class = get_called_class();
+		$reflection = new ReflectionClass(new $class);
+		$properties   = $reflection->getProperties(ReflectionProperty::IS_PUBLIC | ReflectionProperty::IS_PROTECTED);
+		$aProperties = array();
+		foreach($properties as $prop) {
+			$aProperties[] = $prop->name;
+		}
+		return $aProperties;
 	}
+	
+	
+	
+	public function getProjection(){
+		
+		$properties = $this->getChildProperties();
+		$obj = new stdClass();
+		foreach($properties as $p) {
+			if($p != "db") {
+				$obj->$p = $this->$p;
+			}
+		}
+		return $obj;
+		
+	}
+	
+	public static function getProjections(array $models){
+		$retval = array();
+		foreach($models as $m) {
+			if($m instanceof Model) {
+				$retval[] = $m->getProjection();
+			}
+		}
+		return $retval;
+	}
+	
+
 }

@@ -4,6 +4,7 @@ abstract class Controller {
 	protected $Config;
 	protected $Tpl;
 	protected $Uri;
+	protected $autoload_templates = true;
 	
 	public function Controller(){
 		$this->Config = new Config();
@@ -25,6 +26,39 @@ abstract class Controller {
 					strtolower($this->Uri->segment(2)) :
 					"index"
 		);
+	}
+	
+	public function __destruct() {
+		
+		if($this->autoload_templates == false) {
+			return;
+		}
+		
+		$routerLib = new Router();
+		
+		$controller_class = get_called_class();
+		$module_dir = $routerLib->getControllerModuleDir($controller_class);
+		$class_name = strtolower(str_replace("Controller", "", $controller_class));
+		
+		$views_dir = $module_dir . "views" . DIRECTORY_SEPARATOR . $class_name . DIRECTORY_SEPARATOR;
+		
+		$action = $routerLib->getAction();
+		
+		$template_extensions = array( ".html", ".tpl", ".phtml", ".php" );
+		
+		
+		foreach ($template_extensions as $ext) {
+			if( is_file( $views_dir . $action . $ext) == true ) {
+				$tpl = $routerLib->getControllerModuleName($controller_class) . DIRECTORY_SEPARATOR . 
+					"views" . DIRECTORY_SEPARATOR . 
+					$class_name . DIRECTORY_SEPARATOR . 
+					$action . $ext;
+
+				$this->Tpl->display($tpl);
+				break;
+			}
+		}
+		
 	}
 	
 	

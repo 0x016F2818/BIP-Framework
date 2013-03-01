@@ -6,6 +6,7 @@
  * @company		hgeorgiev.com
  * @license		check License.txt
  */
+
 class Db{
 	
 	private static $instance;
@@ -566,3 +567,5 @@ class Db{
     	return;
     }
 }
+
+
