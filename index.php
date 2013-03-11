@@ -4,6 +4,11 @@ session_start();
 
 define("PROJPATH", __DIR__ . DIRECTORY_SEPARATOR);
 define("APPPATH", PROJPATH . "application" . DIRECTORY_SEPARATOR);
+if(php_sapi_name() == "cli") {
+	define("__ENVIRONMENT__", "cli");
+} else {
+	define("__ENVIRONMENT__", "browser");
+}
 
 include PROJPATH . 'config/main.php';
 foreach (glob( PROJPATH . "system/*.php") as $filename) {

@@ -117,7 +117,11 @@ class Uri{
     * @return   array
     */
 	private function getUris(){
-		$url = isset($_GET['url']) ? $_GET['url'] : false;
+		if(__ENVIRONMENT__ == "browser") {
+			$url = isset($_GET['url']) ? $_GET['url'] : false;
+		} else {
+			$url = isset($_SERVER['argv'][1]) ? $_SERVER['argv'][1] : false;
+		}
         if($url == false){
             return false;
         }
@@ -127,6 +131,7 @@ class Uri{
         }
         return $uris;
 	}
+	
 	
 	
 	public function setUriString($string){
