@@ -7,6 +7,14 @@
  * @license		check License.txt
  */
 
+
+require_once PROJPATH . "system/Database/ColumnType.php";
+require_once PROJPATH . "system/Database/FieldOption.php";
+require_once PROJPATH . "system/Database/FieldOptionDefault.php";
+require_once PROJPATH . "system/Database/FieldOptionLimit.php";
+require_once PROJPATH . 'system/Database/FieldOptionNull.php';
+
+
 class Db{
 	
 	private static $instance;
@@ -38,11 +46,10 @@ class Db{
 	 * constructor
 	 * establish database connection
 	 * 
-	 * @access private
-	 * @param void
-	 * @return void
+	 * @access	private
+	 * @param 	string
 	 */
-	private function DB($profile){
+	private function Db($profile){
         
         /* load database conf data */
         $conf = new Config();
@@ -74,13 +81,13 @@ class Db{
 	
 	
 	/**
-     * getInstance
-	 * returns instance of the database class
-	 * 
-	 * @access	public
-	 * @param	void
-	 * @return	Db
-	 */
+	* getInstance
+	* returns instance of the database class
+	* 
+	* @access	public
+	* @param	void
+	* @return 	Db
+	*/
 	public static function getInstance($profile = false){
 		
 		if($profile == false) {
@@ -538,6 +545,101 @@ class Db{
         $this->group_by = "";
         $this->having = '';
     }
+	
+    public function table_exists($table_name) {
+    	$sql = "
+    		SHOW TABLES LIKE '" . filter_var($table_name, FILTER_SANITIZE_SPECIAL_CHARS) . "';
+    	";
+    	$res = $this->query($sql);
+    	if(!empty($res)) {
+    		return true;
+    	}
+    	return false;
+    }
+    
+    
+	public function create_table($table_name) {
+		
+		$sql = sprintf("
+			CREATE TABLE %s ( 
+				id INT(11) NOT NULL AUTO_INCREMENT,
+				PRIMARY KEY (id)
+			) 
+			", $table_name
+		);
+		$this->query($sql);
+		
+		return $this->table_exists($table_name);
+		
+	}
+	
+	
+	public function drop_table($table_name) {
+	
+		$sql = sprintf("DROP TABLE IF EXISTS %s", $table_name);
+		$this->query($sql);
+		
+		return !$this->table_exists($table_name);
+	}
+	
+	
+	public function add_field($table_name, $field_name, $field_type, $options = array()) {
+	
+		$null = "NULL";
+		$limit = false;
+		$default = "DEFAULT NULL";
+		$type = $field_type;
+	
+		foreach($options as $opt) {
+			switch (get_class($opt)){
+				case "FieldOptionLimit":
+					$type .= "(" . $opt->getValue() . ")";
+					break;
+				case "FieldOptionDefault":
+					$val = $opt->getValue();
+					$default = "DEFAULT ";
+					if((int)$val !== 0) {
+						$default .= $val;
+					}  else {
+						$default .= "'" . $val . "'";
+					}
+					break;
+				case "FieldOptionNull":
+					if($opt->getValue() == false) {
+						$null = " NOT NULL";
+					}
+					break;
+				default:
+					throw new Exception("Unsupported field option");
+			}
+		}
+	
+		if($limit == false) {
+			if($type == ColumnType::INTEGER) {
+				$type .= "(11) ";
+			}
+			if($type == ColumnType::STRING) {
+				$type .= "(255) ";
+			}
+		}
+	
+		$sql = "
+			ALTER TABLE  $table_name
+				ADD COLUMN $field_name $type $null $default
+		";
+		$this->query($sql);
+	
+	
+	}
+	
+	
+	public function remove_field($table_name, $field_name) {
+		$sql = sprintf("
+			ALTER TABLE %s DROP COLUMN %s", $table_name,  $field_name
+		);
+		$this->query($sql);
+
+	}
 	
 	
 	/**

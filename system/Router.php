@@ -8,6 +8,8 @@ class Router {
 	private $Config;
 	private $Uri;
 	
+	private static $fileIndexes = array();
+	
 	public function Router(){
 		$this->Config = new Config();
 		$this->Uri = new Uri();
@@ -72,27 +74,55 @@ class Router {
 	
 	
 	public function buildControllerIndex(){
-		$controllers_index = array();
+		
+		$controllers = $this->getFileIndex("controllers");
+		$retval = array();
+		foreach($controllers as $key => $val) {
+			$new_key = strtolower(str_replace("Controller", "", $key));
+			$retval[$new_key] = $val; 
+		}
+		return $retval;
+	}
 	
-		$files = scandir(PROJPATH . "application/");
+	public function buildModelIndex(){
+		return $this->getFileIndex("models");
+	}
+	
+	public function buildProjectionIndex(){
+		return $this->getFileIndex("projections");
+	}
+	
+	private function getFileIndex( $folder, $lowercase_key = false){
+		
+		if(isset(self::$fileIndexes[$folder])) {
+			return self::$fileIndexes[$folder];
+		}
+		
+		$file_index = array();
+		
+		$files = scandir(APPPATH);
 		foreach($files as $f) {
-			$dir = PROJPATH . "application/" . $f;
+			$dir = APPPATH .  $f;
 			if(in_array($f, array(".", "..")) == false) {
-				$controllers_dir = $dir . "/controllers/";
-				if(is_dir($controllers_dir)) {
-					$controllers = scandir($controllers_dir);
-					foreach($controllers as $c) {
-						$file = $controllers_dir . $c;
+				$file_dir = $dir . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR;
+				if(is_dir($file_dir)) {
+					$models = scandir($file_dir);
+					foreach($models as $c) {
+						$file = $file_dir . $c;
 						if(is_file($file) && in_array($c, array(".", "..")) == false) {
-	
-							$key = strtolower(str_replace("Controller", "", pathinfo($file, PATHINFO_FILENAME)));
-							$controllers_index[$key] = $file;
+		
+							$key = pathinfo($file, PATHINFO_FILENAME);
+							if($lowercase_key == true) {
+								$key = strtolower($key);
+							}
+							$file_index[$key] = $file;
 						}
 					}
 				}
 			}
 		}
-		return $controllers_index;
+		self::$fileIndexes[$folder] = $file_index;
+		return $file_index;
 	}
 	
 	public function getControllerModuleDir($controller_class){

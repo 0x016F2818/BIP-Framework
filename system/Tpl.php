@@ -53,6 +53,20 @@ class Tpl{
     
     
     /**
+     * assign_array
+     * 
+     * @access	public
+     * @param 	array	 $arr
+     * @return 	void
+     */
+    public function assign_array($arr) {
+    	foreach($arr as $key => $value) {
+    		$this->__set($key, $value);
+    	}
+    }
+    
+    
+    /**
     * fetch
     * 
     * @access   public

@@ -4,7 +4,7 @@ abstract class Controller {
 	protected $Config;
 	protected $Tpl;
 	protected $Uri;
-	protected $autoload_templates = true;
+	public $autoload_templates = true;
 	
 	public function Controller(){
 		$this->Config = new Config();
@@ -27,6 +27,7 @@ abstract class Controller {
 					"index"
 		);
 	}
+	
 	
 	public function __destruct() {
 		

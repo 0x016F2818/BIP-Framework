@@ -15,6 +15,8 @@ abstract class Model {
 		$this->db = Db::getInstance( $profile );
 		
 	}
+	
+	abstract function getTable();
 
 	public function get($id) {
 
@@ -152,9 +154,7 @@ abstract class Model {
 	public static function getProjections(array $models){
 		$retval = array();
 		foreach($models as $m) {
-			if($m instanceof Model) {
-				$retval[] = $m->getProjection();
-			}
+			$retval[] = $m->getProjection();
 		}
 		return $retval;
 	}
